@@ -2,19 +2,32 @@
 # -*- coding: utf-8 -*-
 #
 # alvadescpy/wrapper.py
-# v.0.1.0
+# v.0.1.1
 # Developed in 2019 by Travis Kessler <travis.j.kessler@gmail.com>
 #
 # contains `alvadesc` function, a wrapper for alvaDesc software
 #
 
 # stdlib. imports
-from subprocess import check_output, PIPE, Popen
+from subprocess import check_output, PIPE, Popen, call
 from csv import writer, QUOTE_ALL
 from typing import TypeVar
+import platform
+from os.path import realpath
 
 # path to alvaDesc command line interface executable
-ALVADESC_PATH = 'C:\\Program Files\\Alvascience\\alvaDesc\\alvaDescCLI.exe'
+CONFIG = {
+    'alvadesc_path': None
+}
+plt = platform.system()
+if plt == 'Windows':
+    CONFIG['alvadesc_path'] = 'C:\\Program Files\\Alvascience\\alvaDesc\\alvaDescCLI.exe'
+elif plt == 'Darwin':
+    CONFIG['alvadesc_path'] = '/Applications/alvaDesc.app/Contents/MacOS/alvaDescCLI'
+elif plt == 'Linux':
+    CONFIG['alvadesc_path'] = '/usr/bin/alvaDescCLI'
+else:
+    raise RuntimeError('Unknown/unsupported operating system: {}'.format(plt))
 
 # custom argument variable (either str or list)
 _DESC = TypeVar('_DESC', str, list)
@@ -33,15 +46,12 @@ def _sub_call(command: str) -> list:
     try:
         p = Popen(command, stdout=PIPE, stderr=PIPE)
     except FileNotFoundError as exception:
-        raise FileNotFoundError('{}\n alvaDescCLI.exe not found at {}'.format(
-            exception, ALVADESC_PATH
+        raise FileNotFoundError('{}\n alvaDescCLI not found at {}'.format(
+            exception, CONFIG['alvadesc_path']
         ))
     except Exception as exception:
         raise Exception('{}'.format(exception))
-    out = p.communicate()[0].decode('utf-8').split('\r\n')[:-1]
-    for idx, o in enumerate(out):
-        out[idx] = o.split('\t')
-    return out
+    return p.communicate()[0].decode('utf-8')
 
 
 def alvadesc(script: str=None, ismiles: str=None, input_file: str=None,
@@ -85,7 +95,7 @@ def alvadesc(script: str=None, ismiles: str=None, input_file: str=None,
     '''
 
     if script is not None:
-        _ = _sub_call('{} --script={}'.format(ALVADESC_PATH, script))
+        _ = _sub_call(' --script={}'.format(script))
         return
 
     if ismiles is not None and input_file is not None:
@@ -94,19 +104,20 @@ def alvadesc(script: str=None, ismiles: str=None, input_file: str=None,
     if input_file is not None and inputtype is None:
         raise ValueError('Must supply `inputtype` if supplying `input_file`')
 
-    command = '{}'.format(ALVADESC_PATH)
+    command = [CONFIG['alvadesc_path']]
 
     if ismiles is not None:
-        command += ' --iSMILES={}'.format(ismiles)
+        command.append('--iSMILES={}'.format(ismiles))
 
     if input_file is not None:
-        command += ' --input={} --inputtype={}'.format(input_file, inputtype)
+        command.append('--input={}'.format(input_file))
+        command.append('--inputtype={}'.format(inputtype))
 
     if output is not None:
-        command += ' --output={}'.format(output)
+        command.append('--output={}'.format(output))
 
     if threads is not None:
-        command += ' --threads={}'.format(threads)
+        command.append('--threads={}'.format(threads))
 
     if ecfp is True or pfp is True or maccsfp is True:
 
@@ -114,50 +125,62 @@ def alvadesc(script: str=None, ismiles: str=None, input_file: str=None,
             raise ValueError('Only one type of fingerprint can be calculated')
 
         if ecfp is True:
-            command += ' --ecfp'
+            command.append('--ecfp')
 
         if pfp is True:
-            command += ' --pfp'
+            command.append('--pfp')
 
         if maccsfp is True:
-            command += ' --maccsfp'
+            command.append('--maccsfp')
 
-        command += ' --size={}'.format(fpsize)
-        command += ' --min={}'.format(fpmin)
-        command += ' --max={}'.format(fpmax)
-        command += ' --bits={}'.format(bits)
+        command.append('--size={}'.format(fpsize))
+        command.append('--min={}'.format(fpmin))
+        command.append('--max={}'.format(fpmax))
+        command.append('--bits={}'.format(bits))
         if count is not True:
-            command += ' --count=FALSE'
+            command.append('--count=FALSE')
         if fpoptions is not None:
-            command += ' --fpoptions={}'.format(fpoptions)
-        return _sub_call(command)
+            command.append('--fpoptions={}'.format(fpoptions))
 
     if labels is True:
-        command += ' --labels'
+        command.append('--labels')
 
     if descriptors is not None:
         if descriptors == 'ALL':
-            command += ' --descriptors=ALL'
+            command.append('--descriptors=ALL')
         elif type(descriptors) is list:
-            command += ' --descriptors=\"'
+            cmd = '--descriptors='
             for idx, desc in enumerate(descriptors):
-                command += '{}'.format(desc)
+                cmd += '{}'.format(desc)
                 if idx != len(descriptors) - 1:
-                    command += ','
-            command += '\"'
+                    cmd += ','
+            # cmd += ''
+            command.append(cmd)
         else:
             raise ValueError('Unknown `descriptors` argument: {}'.format(
                 descriptors
             ))
 
-    descriptors_raw = _sub_call(command)
-    calculated_descriptors = []
+    descriptors_raw = _sub_call(command).split('\n')[:-1]
+    val_start_idx = 0
     if labels is True:
-        molecule = {}
-        for mol in descriptors_raw[1:]:
-            for idx, label in enumerate(descriptors_raw[0]):
-                molecule[label] = mol[idx]
-        calculated_descriptors.append(molecule)
-    else:
-        calculated_descriptors = [mol for mol in descriptors_raw]
-    return calculated_descriptors
+        desc_names = descriptors_raw[0].split('\t')
+        val_start_idx = 1
+    desc_vals = []
+    for d in descriptors_raw[val_start_idx:]:
+        _vals = d.split('\t')
+        for vidx, v in enumerate(_vals):
+            try:
+                _vals[vidx] = float(v)
+            except ValueError:
+                continue
+        desc_vals.append(_vals)
+    if labels is False:
+        return desc_vals
+    desc_dicts = []
+    for mol in desc_vals:
+        moldict = {}
+        for nidx, name in enumerate(desc_names):
+            moldict[name] = mol[nidx]
+        desc_dicts.append(moldict)
+    return desc_dicts

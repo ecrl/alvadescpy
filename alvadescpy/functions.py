@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 #
 # alvadescpy/functions.py
-# v.0.1.0
+# v.0.1.1
 # Developed in 2019 by Travis Kessler <travis.j.kessler@gmail.com>
 #
 # contains functions for common alvaDesc tasks

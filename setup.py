@@ -2,7 +2,7 @@ from setuptools import setup, find_packages
 
 setup(
     name='alvadescpy',
-    version='0.1.0',
+    version='0.1.1',
     description='Python wrapper for alvaDesc software',
     url='http://github.com/tjkessler/ecnet',
     author='Travis Kessler',
