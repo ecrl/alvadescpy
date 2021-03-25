@@ -28,12 +28,12 @@ There are currently no additional dependencies for alvaDescPy, however it requir
 
 ## Basic Usage
 
-alvaDescPy assumes the location of alvaDesc's command-line interface is located at ```C:\Program Files\Alvascience\alvaDesc\alvaDescCLI.exe```. If alvaDesc is located in a different location, you can change the path:
+alvaDescPy assumes the location of alvaDesc's command-line interface is located at your OS's default location. If alvaDesc is located in a different location, you can change the path:
 
 ```python
-from alvadescpy import ALVADESC_PATH
+from alvadescpy import CONFIG
 
-ALVADESC_PATH = '\\path\\to\\alvaDescCLI.exe'
+CONFIG['alvadesc_path'] = '\\path\\to\\alvaDescCLI'
 ```
 
 alvaDescPy provides direct access to all alvaDesc command line arguments via the "alvadesc" function:
