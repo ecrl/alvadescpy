@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 #
 # alvadescpy/wrapper.py
-# v.0.1.1
+# v.0.1.2
 # Developed in 2019 by Travis Kessler <travis.j.kessler@gmail.com>
 #
 # contains `alvadesc` function, a wrapper for alvaDesc software

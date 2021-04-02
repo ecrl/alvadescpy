@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 #
 # alvadescpy/functions.py
-# v.0.1.1
+# v.0.1.2
 # Developed in 2019 by Travis Kessler <travis.j.kessler@gmail.com>
 #
 # contains functions for common alvaDesc tasks
@@ -25,7 +25,7 @@ def smiles_to_descriptors(smiles: str, descriptors: _DESC='ALL',
     molecule (represented by its SMILES string)
 
     Args:
-        smiles (str): SMILES string for a given molecule
+        smiles (str, list): SMILES string for a given molecule
         descriptors (str, list): `ALL` for all descriptors, or list containing
             individual descriptors (str's)
         labels (bool): if `True`, labels are included in return value (dict);
@@ -36,4 +36,7 @@ def smiles_to_descriptors(smiles: str, descriptors: _DESC='ALL',
             else a dict
     '''
 
+    if type(smiles) == list:
+        return [alvadesc(ismiles=smi, descriptors=descriptors, labels=labels)[0]
+                for smi in smiles]
     return alvadesc(ismiles=smiles, descriptors=descriptors, labels=labels)[0]
