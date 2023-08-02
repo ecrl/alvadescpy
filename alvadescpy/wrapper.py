@@ -20,10 +20,10 @@ CONFIG = {
 plt = platform.system()
 if plt == 'Windows':
     CONFIG['alvadesc_path'] = 'C:\\Program Files\\Alvascience\\alvaDesc\\\
-        alvaDescCLI.exe'
+alvaDescCLI.exe'
 elif plt == 'Darwin':
     CONFIG['alvadesc_path'] = '/Applications/alvaDesc.app/Contents/MacOS/\
-        alvaDescCLI'
+alvaDescCLI'
 elif plt == 'Linux':
     CONFIG['alvadesc_path'] = '/usr/bin/alvaDescCLI'
 else:
