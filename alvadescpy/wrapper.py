@@ -30,7 +30,7 @@ else:
     raise RuntimeError('Unknown/unsupported operating system: {}'.format(plt))
 
 # custom argument variable (either str or list)
-_DESC = TypeVar('_DESC', str, list)
+str_or_list = TypeVar('str_or_list', str, list)
 
 
 def _sub_call(command: str) -> list:
@@ -55,7 +55,7 @@ def _sub_call(command: str) -> list:
 
 
 def alvadesc(script: str = None, ismiles: str = None, input_file: str = None,
-             inputtype: str = None, descriptors: _DESC = None,
+             inputtype: str = None, descriptors: str_or_list = None,
              labels: bool = False, ecfp: bool = False, pfp: bool = False,
              fpsize: int = 1024, fpmin: int = 0, fpmax: int = 2,
              count: bool = True, bits: int = 2, fpoptions: str = None,

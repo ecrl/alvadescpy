@@ -15,12 +15,13 @@ from typing import TypeVar
 from alvadescpy import alvadesc
 
 # custom argument and return variables
-_DESC = TypeVar('_DESC', str, list)
-_RET_VAL = TypeVar('_RET_VAL', dict, list)
+str_or_list = TypeVar('str_or_list', str, list)
+list_or_dict = TypeVar('list_or_dict', dict, list)
 
 
-def smiles_to_descriptors(smiles: str, descriptors: _DESC='ALL',
-                          labels: bool=True) -> _RET_VAL:
+def smiles_to_descriptors(smiles: str_or_list,
+                          descriptors: str_or_list = 'ALL',
+                          labels: bool = True) -> list_or_dict:
     ''' smiles_to_descriptors: returns molecular descriptors for a given
     molecule (represented by its SMILES string)
 
@@ -37,6 +38,8 @@ def smiles_to_descriptors(smiles: str, descriptors: _DESC='ALL',
     '''
 
     if type(smiles) == list:
-        return [alvadesc(ismiles=smi, descriptors=descriptors, labels=labels)[0]
-                for smi in smiles]
+        return [
+            alvadesc(ismiles=smi, descriptors=descriptors, labels=labels)[0]
+            for smi in smiles
+        ]
     return alvadesc(ismiles=smiles, descriptors=descriptors, labels=labels)[0]
