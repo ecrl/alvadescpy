@@ -21,7 +21,7 @@ Installation via cloned repository:
 ```
 $ git clone https://github.com/ecrl/alvadescpy
 $ cd alvadescpy
-$ python setup.py install
+$ pip install .
 ```
 
 There are currently no additional dependencies for alvaDescPy, however it requires a valid, licensed installation of [alvaDesc](https://www.alvascience.com/alvadesc/).

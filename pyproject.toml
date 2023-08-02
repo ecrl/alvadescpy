@@ -1,0 +1,22 @@
+[build-system]
+requires = ["setuptools>=61.0"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "alvadescpy"
+version = "0.1.3"
+authors = [
+    { name="Travis Kessler", email="travis.j.kessler@gmail.com" },
+]
+description = "Python wrapper for alvaDesc software"
+readme = "README.md"
+requires-python = ">=3.11"
+classifiers = [
+    "Programming Language :: Python :: 3.11",
+    "License :: OSI Approved :: MIT License",
+    "Operating System :: OS Independent",
+]
+
+[project.urls]
+"Homepage" = "https://github.com/ecrl/alvadescpy"
+"Bug Tracker" = "https://github.com/ecrl/alvadescpy/issues"

@@ -9,11 +9,9 @@
 #
 
 # stdlib. imports
-from subprocess import check_output, PIPE, Popen, call
-from csv import writer, QUOTE_ALL
+from subprocess import PIPE, Popen
 from typing import TypeVar
 import platform
-from os.path import realpath
 
 # path to alvaDesc command line interface executable
 CONFIG = {
@@ -21,16 +19,18 @@ CONFIG = {
 }
 plt = platform.system()
 if plt == 'Windows':
-    CONFIG['alvadesc_path'] = 'C:\\Program Files\\Alvascience\\alvaDesc\\alvaDescCLI.exe'
+    CONFIG['alvadesc_path'] = 'C:\\Program Files\\Alvascience\\alvaDesc\\\
+alvaDescCLI.exe'
 elif plt == 'Darwin':
-    CONFIG['alvadesc_path'] = '/Applications/alvaDesc.app/Contents/MacOS/alvaDescCLI'
+    CONFIG['alvadesc_path'] = '/Applications/alvaDesc.app/Contents/MacOS/\
+alvaDescCLI'
 elif plt == 'Linux':
     CONFIG['alvadesc_path'] = '/usr/bin/alvaDescCLI'
 else:
     raise RuntimeError('Unknown/unsupported operating system: {}'.format(plt))
 
 # custom argument variable (either str or list)
-_DESC = TypeVar('_DESC', str, list)
+str_or_list = TypeVar('str_or_list', str, list)
 
 
 def _sub_call(command: str) -> list:
@@ -54,12 +54,15 @@ def _sub_call(command: str) -> list:
     return p.communicate()[0].decode('utf-8')
 
 
-def alvadesc(script: str=None, ismiles: str=None, input_file: str=None,
-             inputtype: str=None, descriptors: _DESC=None, labels: bool=False,
-             ecfp: bool=False, pfp: bool=False, fpsize: int=1024, fpmin: int=0,
-             fpmax: int=2, count: bool=True, bits: int=2, fpoptions: str=None,
-             maccsfp: bool=False, output: str=None, threads: int=None) -> list:
-    ''' alvadesc: calls alvaDesc's command line interface; supports all arguments
+def alvadesc(script: str = None, ismiles: str = None, input_file: str = None,
+             inputtype: str = None, descriptors: str_or_list = None,
+             labels: bool = False, ecfp: bool = False, pfp: bool = False,
+             fpsize: int = 1024, fpmin: int = 0, fpmax: int = 2,
+             count: bool = True, bits: int = 2, fpoptions: str = None,
+             maccsfp: bool = False, output: str = None,
+             threads: int = None) -> list:
+    ''' alvadesc: calls alvaDesc's command line interface; supports all
+    arguments
 
     Args:
         script (str): path to script file containing all available options; if
