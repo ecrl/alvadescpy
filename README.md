@@ -8,6 +8,10 @@
 
 alvaDescPy provides a Python wrapper for the [alvaDesc](https://www.alvascience.com/alvadesc/) molecular descriptor calculation software. It was created to allow direct access to the alvaDesc command-line interface via Python.
 
+Important Notice:
+
+Please note that alvaDescPy is an independent project and was not developed by Alvascience. You can find the official alvaDesc Python interface on Alvascience website: https://www.alvascience.com/python-alvadesc/.
+
 ## Installation
 
 Installation via pip:
